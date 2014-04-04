@@ -32,7 +32,7 @@ extend:
     - managed
     - source:
       - salt://shorewall/files/{{ grains['id'] }}/etc/shorewall/shorewall.conf.jinja
-      - salt://shorewall/files/etc/shorewall/shorewall.conf.jinja
+      - salt://shorewall/files/default/etc/shorewall/shorewall.conf.jinja
     - template: jinja
     - watch_in:
       - service: shorewall
@@ -46,7 +46,7 @@ extend:
     - managed
     - source:
       - salt://shorewall/files/{{ grains['id'] }}/etc/shorewall/{{ conf }}.jinja
-      - salt://shorewall/files/etc/shorewall/{{ conf }}.jinja
+      - salt://shorewall/files/default/etc/shorewall/{{ conf }}.jinja
     - template: jinja
     - watch_in:
       - service: shorewall
