@@ -1,0 +1,6 @@
+{% set users = salt['grains.filter_by']({
+    'default': {
+        'pkg': 'users',
+        'service': 'users',
+    },
+}, merge=salt['pillar.get']('users:lookup')) %}
