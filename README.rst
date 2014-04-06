@@ -18,4 +18,10 @@ Available states
 ``sudo``
 ------------
 
-Installs the sudo package and and configures sudoers file.
+Installs the sudo package.
+
+``conf``
+------------
+
+Configures sudoers file.
+
