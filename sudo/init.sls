@@ -4,6 +4,3 @@ sudo:
   pkg:
     - installed
     - name: {{ sudo.pkg }}
-  group:
-    - present
-    - system: True
