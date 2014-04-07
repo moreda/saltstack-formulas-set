@@ -25,3 +25,8 @@ Installs the sudo package.
 
 Configures sudoers file.
 
+``users``
+------------
+
+Creates sudo group.
+
