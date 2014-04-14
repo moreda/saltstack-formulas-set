@@ -33,6 +33,12 @@
     - require:
       - user: {{ user }}
   {% endif %}
+  {% if user_attrs['creategroup'] is defined and user_attrs['creategroup'] %}
+  group:
+    - present
+    - required_in:
+      - user: {{ user }}
+  {% endif %}
 {% endfor %}
 
 
