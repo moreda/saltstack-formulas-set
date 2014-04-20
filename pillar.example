@@ -1,0 +1,6 @@
+system:
+  packages:
+    - curl
+    - tree: '1.5.3-2'
+    - vim
+    - git
