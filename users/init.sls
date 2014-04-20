@@ -11,8 +11,8 @@
     - fullname: {{ user_attrs['fullname']| default('') }}
     - password: {{ user_attrs['password']| default('!') }}
     - shell: {{ user_attrs['shell']| default('/bin/bash') }}
-    {% if user_attrs['group'] is defined %}
-    - group: {{ user_attrs['group'] }}
+    {% if user_attrs['creategroup'] is defined and user_attrs['creategroup'] %}
+    - gid_from_name: True
     {% endif %}
     {% if user_attrs['groups'] is defined %}
     - groups: {{ user_attrs['groups'] }}
@@ -20,9 +20,6 @@
       {% for group in user_attrs['groups'] %}
       - group: {{ group }}
       {% endfor %}
-      {% if user_attrs['group'] is defined %}
-      - group: {{ user_attrs['group'] }}
-      {% endif %}
     {% endif %}
   # Create ssh auth keys for each user.
   {% if user_attrs['ssh_auth'] is defined %}
@@ -36,7 +33,7 @@
   {% if user_attrs['creategroup'] is defined and user_attrs['creategroup'] %}
   group:
     - present
-    - required_in:
+    - require_in:
       - user: {{ user }}
   {% endif %}
 {% endfor %}
