@@ -1,0 +1,13 @@
+php5-fpm:
+  pools:
+    example_pool:
+      user: bob
+      group: users
+      log_dir: /home/bob/log
+      listen: 127.0.0.1:9000
+    example_with_socket:
+      user: bob
+      group: www-data
+      listen: /var/run/php5-fpm_example_with_socket.socket
+    absent_pools:
+      - pool_to_delete
