@@ -1,0 +1,8 @@
+{% set nginx = salt['grains.filter_by']({
+    'default': {
+        'pkg': 'nginx',
+        'service': 'nginx',
+        'config': '/etc/nginx/nginx.conf',
+    },
+}, merge=salt['pillar.get']('nginx:lookup')) %}
+

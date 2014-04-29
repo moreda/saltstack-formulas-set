@@ -1,0 +1,34 @@
+nginx:
+  user: www-data
+  group: www-data
+  worker_processes: 4
+  keepalive_timeout: 2
+  sites:
+    www.example1.com:
+      template: ssl_proxy
+      server_name: www.foo.com
+      listen: 10.10.10.10:443
+      proxy_pass: http://localhost
+      ssl:
+        certificate: |
+          XXXX
+          XXXX
+        key: |
+          key-XXXX
+          key-XXXX
+      # Extra configuration to be added to the VirtualHost environment
+      extra_conf: |
+        # This is an example of snippet added to the conf from pillar data
+    bobs.website.com.conf:
+      template: minimal
+      server_name: bobs.website.com
+      root: /home/bob/public_html
+      user: bob
+      group: www-data
+      # Extra configuration to be added to the VirtualHost environment
+      extra_conf: |
+        # This is an example of snippet added to the conf from pillar data
+  disabled_sites:
+    - default
+  absent_sites:
+    - conf_to_delete
