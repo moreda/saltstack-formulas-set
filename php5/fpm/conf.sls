@@ -11,8 +11,8 @@ include:
   file:
     - managed
     - source:
-      - salt://php5-fpm/files/{{ grains['id'] }}/etc/php5/fpm/pool.d/www.conf.jinja
-      - salt://php5-fpm/files/default/etc/php5/fpm/pool.d/www.conf.jinja
+      - salt://php5/files/{{ grains['id'] }}/etc/php5/fpm/pool.d/www.conf.jinja
+      - salt://php5/files/default/etc/php5/fpm/pool.d/www.conf.jinja
     - template: jinja
     - context:
         pool: {{ pool }}
