@@ -6,7 +6,8 @@ shorewall:
   # conf rules to give ssh access from the Network Ops Center. It's used in
   # the default minimalistic configuration provided.
   noc_nets: '66.66.66.66/24,99.99.99.99'
-  # We assume that there is a files/etc/shorewall/<conf>.jinja for each case.
+  # We assume that there is a files/<minion-id>/etc/shorewall/<conf>.jinja or
+  # files/default/etc/shorewall/<conf>.jinja for each case.
   confs:
     - interfaces
     - params
