@@ -2,15 +2,15 @@
 
 
 # Create users conforming to pillar.
-{% for user in pillar['users']| default({}) %}
+{% for user in pillar['users']| d({}) %}
 {% set user_attrs = pillar['users'][user] %}
 {{ user }}:
   user:
     - present
     - name: {{ user }}
-    - fullname: {{ user_attrs['fullname']| default('') }}
-    - password: {{ user_attrs['password']| default('!') }}
-    - shell: {{ user_attrs['shell']| default('/bin/bash') }}
+    - fullname: {{ user_attrs['fullname']| d('') }}
+    - password: {{ user_attrs['password']| d('!') }}
+    - shell: {{ user_attrs['shell']| d('/bin/bash') }}
     {% if user_attrs['creategroup'] is defined and user_attrs['creategroup'] %}
     - gid_from_name: True
     {% endif %}
