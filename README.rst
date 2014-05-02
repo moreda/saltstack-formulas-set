@@ -1,8 +1,39 @@
-================
+============
 php5-formula
-================
+============
 
 A saltstack formula to manage php5 and php5-fpm.
+
+This formula has been developed distributing id and state declarations in
+different files to make it usable in most situations. It should be useful from
+scenarios with a simple install of the package (without any special
+configuration) to a complete set-up with virtual hosts.
+
+Any special needs could be addressed forking the formula repo, even in-place at
+the server acting as master. I'm trying to keep this as general as possible and
+further general improvements would be added.
+
+The ``files`` directory is structured using a ``default`` root and
+optional ``<minion-id>`` directories:
+
+.. code:: asciidoc
+
+    files
+      |-- default
+      |        |-- etc
+      |        |    |-- foo.conf
+      |        |    `-- bar.conf
+      |        `-- usr/share/thingy/*
+      `-- <minion-id>
+              |-- etc
+              |    |-- foo.conf
+              |    `-- bar.conf
+              `-- usr/share/thingy/*
+
+This way we have certain flexibility to use different files for different
+minions. **It's not designed to substitute pillar data**. Remember that
+pillar has to be used for info that it's essential to be only known for a
+certain set of minions (i.e. passwords, private keys and such).
 
 .. note::
 

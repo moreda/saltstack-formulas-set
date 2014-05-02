@@ -6,13 +6,29 @@ include:
 
 
 {% for pool in salt['pillar.get']('php5-fpm:pools', []) %}
-{% set pool_attr = salt['pillar.get']('php5-fpm:pools:' ~ pool) %}
+
+  {% set pool_attr = salt['pillar.get']('php5-fpm:pools:' ~ pool) %}
+
+ {% if pool_attr['conf_filename'] is defined %}
+    {% set conf_filename = pool_attr['conf_filename'] %}
+  {% else %}
+    {% set conf_filename = pool ~ '.conf' %}
+  {% endif %}
+
+  {% if pool_attr['template'] is defined %}
+    {% set template = pool_attr['template'] %}
+  {% else %}
+    {% set template = 'minimal' %}
+  {% endif %}
+
+  {% if pool_attr['state'] is not defined or
+        pool_attr['state'] == 'enabled' %}
 /etc/php5/fpm/pool.d/{{ pool }}.conf:
   file:
     - managed
     - source:
-      - salt://php5/files/{{ grains['id'] }}/etc/php5/fpm/pool.d/www.conf.jinja
-      - salt://php5/files/default/etc/php5/fpm/pool.d/www.conf.jinja
+      - salt://php5/files/{{ grains['id'] }}/etc/php5/fpm/pool.d/{{ template }}.jinja
+      - salt://php5/files/default/etc/php5/fpm/pool.d/{{ template }}.jinja
     - template: jinja
     - context:
         pool: {{ pool }}
@@ -22,10 +38,9 @@ include:
       - group: {{ pool_attr['group'] }}
     - watch_in:
       - service: php5-fpm
-{% endfor %}
 
 
-{% for pool in salt['pillar.get']('php5-fpm:absent_pools', []) %}
+  {% elif site_attr['state'] == 'absent' %}
 /etc/php5/fpm/pool.d/{{ pool }}.conf:
   file:
     - absent
@@ -33,4 +48,5 @@ include:
       - pkg: php5-fpm
     - watch_in:
       - service: php5-fpm
+  {% endif %}
 {% endfor %}
