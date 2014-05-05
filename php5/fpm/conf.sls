@@ -5,6 +5,10 @@ include:
   - php5.fpm
 
 
+{% set files_switch = salt['pillar.get']('php5-fpm:files_switch', ['id']) %}
+
+
+
 {% for pool in salt['pillar.get']('php5-fpm:pools', []) %}
 
   {% set pool_attr = salt['pillar.get']('php5-fpm:pools:' ~ pool) %}
@@ -27,7 +31,9 @@ include:
   file:
     - managed
     - source:
-      - salt://php5/files/{{ grains['id'] }}/etc/php5/fpm/pool.d/{{ template }}.jinja
+      {% for grain in files_switch if salt['grains.get'](grain) is defined -%}
+      - salt://php5/files/{{ salt['grains.get'](grain) }}/etc/php5/fpm/pool.d/{{ template }}.jinja
+      {% endfor -%}
       - salt://php5/files/default/etc/php5/fpm/pool.d/{{ template }}.jinja
     - template: jinja
     - context:
