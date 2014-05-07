@@ -11,12 +11,17 @@ include:
 # needs.
 
 
+{% set files_switch = salt['pillar.get']('nginx:files_switch', ['id']) %}
+
+
 {{ nginx.config }}:
   file:
     - managed
     - template: jinja
     - source:
-      - salt://nginx/files/{{ grains['id'] }}/etc/nginx/nginx.conf.jinja
+      {% for grain in files_switch if salt['grains.get'](grain) is defined -%}
+      - salt://nginx/files/{{ salt['grains.get'](grain) }}/etc/nginx/nginx.conf.jinja
+      {% endfor -%}
       - salt://nginx/files/default/etc/nginx/nginx.conf.jinja
     - require:
       - pkg: nginx
@@ -25,13 +30,32 @@ include:
 
 
 {% for site in salt['pillar.get']('nginx:sites', []) %}
+
 {% set site_attr = salt['pillar.get']('nginx:sites:' ~ site) %}
-/etc/nginx/sites-available/{{ site }}:
+
+  {% if site_attr['conf_filename'] is defined %}
+    {% set conf_filename = site_attr['conf_filename'] %}
+  {% else %}
+    {% set conf_filename = site ~ '.conf' %}
+  {% endif %}
+
+  {% if site_attr['template'] is defined %}
+    {% set template = site_attr['template'] %}
+  {% else %}
+    {% set template = 'minimal' %}
+  {% endif %}
+
+
+  {% if site_attr['state'] is not defined or
+        site_attr['state'] == 'enabled' %}
+/etc/nginx/sites-available/{{ conf_filename }}:
   file:
     - managed
     - source:
-      - salt://nginx/files/{{ grains['id'] }}/etc/nginx/sites-available/{{ site_attr['template'] }}.jinja
-      - salt://nginx/files/default/etc/nginx/sites-available/{{ site_attr['template'] }}.jinja
+      {% for grain in files_switch if salt['grains.get'](grain) is defined -%}
+      - salt://nginx/files/{{ salt['grains.get'](grain) }}/etc/nginx/sites-available/{{ template }}.jinja
+      {% endfor -%}
+      - salt://nginx/files/default/etc/nginx/sites-available/{{ template }}.jinja
     - template: jinja
     - context:
         site: {{ site }}
@@ -40,71 +64,76 @@ include:
     - watch_in:
       - service: nginx
 
-/etc/nginx/sites-enabled/{{ site }}:
+/etc/nginx/sites-enabled/{{ conf_filename }}:
   file:
     - symlink
-    - target: /etc/nginx/sites-available/{{ site }}
+    - target: /etc/nginx/sites-available/{{ conf_filename }}
     - require:
       - pkg: nginx
     - watch_in:
       - service: nginx
 
 
-{% if site_attr['root'] is defined %}
+    {% if site_attr['create_dirs'] is defined and site_attr['create_dirs'] %}
+      {% if site_attr['root'] is defined %}
 {{ site_attr['root'] }}:
   file:
     - directory
-    - user: {{ site_attr['user'] }}
-    - group: {{ site_attr['group'] }}
+    - user: {{ site_attr['user'] | d('www-data') }}
+    - group: {{ site_attr['group'] | d('www-data') }}
     - mode: 2755
     - require:
-      - user: {{ site_attr['user'] }}
-      - group: {{ site_attr['group'] }}
+      - user: {{ site_attr['user'] | d('www-data') }}
+      - group: {{ site_attr['group'] | d('www-data') }}
     - require_in:
       - service: nginx
-{% endif %}
+      {% endif %}
 
 
-{% if site_attr['log_dir'] is defined %}
+      {% if site_attr['log_dir'] is defined %}
 {{ site_attr['log_dir'] }}:
   file:
     - directory
-    - user: {{ site_attr['user'] }}
-    - group: {{ site_attr['group'] }}
+    - user: {{ site_attr['user'] | d('www-data') }}
+    - group: {{ site_attr['group'] | d('www-data') }}
     - mode: 775
     - require:
-      - user: {{ site_attr['user'] }}
-      - group: {{ site_attr['group'] }}
+      - user: {{ site_attr['user'] | d('www-data') }}
+      - group: {{ site_attr['group'] | d('www-data') }}
     - require_in:
       - service: nginx
-{% endif %}
-{% endfor %}
+      {% endif %}
+    {% endif %}
 
 
-{% for site in salt['pillar.get']('nginx:disabled_sites',[]) %}
-/etc/nginx/sites-enabled/{{ site }}:
+  {% elif site_attr['state'] == "disabled" %}
+/etc/nginx/sites-enabled/{{ conf_filename }}:
   file:
     - absent
     - require:
       - pkg: nginx
     - watch_in:
       - service: nginx
-{% endfor %}
 
 
-{% for site in salt['pillar.get']('nginx:absent_sites',[]) %}
-/etc/nginx/sites-enabled/{{ site }}:
+  {% elif site_attr['state'] == 'absent' %}
+/etc/nginx/sites-enabled/{{ conf_filename }}:
   file:
     - absent
     - require:
       - pkg: nginx
     - watch_in:
       - service: nginx
-/etc/nginx/sites-available/{{ site }}:
+
+
+/etc/nginx/sites-available/{{ conf_filename }}:
   file:
     - absent
     - require:
       - pkg: nginx
     - watch_in:
       - service: nginx
+
+
+  {% endif %}
 {% endfor %}

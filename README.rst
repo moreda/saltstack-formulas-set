@@ -1,6 +1,6 @@
-================
+=============
 nginx-formula
-================
+=============
 
 A saltstack formula to manage nginx.
 
@@ -16,6 +16,21 @@ Available states
     :local:
 
 ``nginx``
-------------
+---------
 
 Installs the nginx package, and starts the associated nginx service.
+
+``nginx.conf``
+--------------
+
+Configures the nginx package.
+
+``nginx.ssl``
+-------------
+
+Puts in place SSL certificates and keys.
+
+``nginx.users``
+---------------
+
+Creates user and group for the service.

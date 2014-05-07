@@ -3,11 +3,11 @@
 
 nginx_user:
   user:
-      - present
-      - name: {{ salt['pillar.get']('nginx:user', 'www-data') }}
+    - present
+    - name: {{ salt['pillar.get']('nginx:user', 'www-data') }}
 
 
 nginx_group:
-    group:
-      - present
-      - name: {{ salt['pillar.get']('nginx:group', 'www-data') }}
+  group:
+    - present
+    - name: {{ salt['pillar.get']('nginx:group', 'www-data') }}

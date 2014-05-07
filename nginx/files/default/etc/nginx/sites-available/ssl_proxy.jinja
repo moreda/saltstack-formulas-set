@@ -2,13 +2,14 @@
 {% set site_attr = salt['pillar.get']('nginx:sites:' ~ site) %}
 {% set default_access_log = '/var/log/nginx/' ~ site ~ '_access.log' %}
 {% set default_error_log = '/var/log/nginx/' ~ site ~ '_error.log' %}
+
 server {
   listen {{ site_attr['listen'] }};
   ssl on;
   server_name {{ site_attr['server_name'] }};
 
-  access_log {{ site_attr['access_log'] | default(default_access_log) }};
-  error_log {{ site_attr['error_log'] | default(default_error_log) }};
+  access_log {{ site_attr['access_log'] | d(default_access_log) }};
+  error_log {{ site_attr['error_log'] | d(default_error_log) }};
 
   ssl_certificate /etc/ssl/certs/{{ site }}.crt;
   ssl_certificate_key /etc/ssl/private/{{ site }}.key;
