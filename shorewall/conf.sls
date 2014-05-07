@@ -5,6 +5,9 @@ include:
   - shorewall
 
 
+{% set files_switch = salt['pillar.get']('shorewall:files_switch', ['id']) %}
+
+
 extend:
   shorewall:
     service:
@@ -31,7 +34,9 @@ extend:
   file:
     - managed
     - source:
-      - salt://shorewall/files/{{ grains['id'] }}/etc/shorewall/shorewall.conf.jinja
+      {% for grain in files_switch if salt['grains.get'](grain) is defined -%}
+      - salt://shorewall/files/{{ salt['grains.get'](grain) }}/etc/shorewall/shorewall.conf.jinja
+      {% endfor -%}
       - salt://shorewall/files/default/etc/shorewall/shorewall.conf.jinja
     - template: jinja
     - watch_in:
@@ -45,7 +50,9 @@ extend:
   file:
     - managed
     - source:
-      - salt://shorewall/files/{{ grains['id'] }}/etc/shorewall/{{ conf }}.jinja
+      {% for grain in files_switch if salt['grains.get'](grain) is defined -%}
+      - salt://shorewall/files/{{ salt['grains.get'](grain) }}/etc/shorewall/{{ conf }}.jinja
+      {% endfor -%}
       - salt://shorewall/files/default/etc/shorewall/{{ conf }}.jinja
     - template: jinja
     - watch_in:
