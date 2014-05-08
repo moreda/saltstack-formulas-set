@@ -8,6 +8,8 @@
   user:
     - present
     - name: {{ user }}
+    - home: {{ user_attrs['home']| d('/home/' ~ user) }}
+    - createhome: {{ user_attrs['createhome']| d('False') }}
     - fullname: {{ user_attrs['fullname']| d('') }}
     - password: {{ user_attrs['password']| d('!') }}
     - shell: {{ user_attrs['shell']| d('/bin/bash') }}
