@@ -46,7 +46,7 @@ include:
       - service: php5-fpm
 
 
-  {% elif site_attr['state'] == 'absent' %}
+  {% elif pool_attr['state'] == 'absent' %}
 /etc/php5/fpm/pool.d/{{ pool }}.conf:
   file:
     - absent
