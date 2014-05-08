@@ -1,12 +1,22 @@
 sudo:
+  # The files_switch key serves as a selector for alternative directories under
+  # the formula files directory. Under the files directory could exist several
+  # subdirectories named on the value of certain grains. By default the selector
+  # is the minion id, but it could be a list of them.
+  files_switch:
+    - id
+    - os_family
+
   users:
     root: 'ALL=(ALL:ALL) ALL'
   groups:
     sudo: 'ALL=(ALL) NOPASSWD: ALL'
+
   defaults:
     - env_reset
     - mail_badpass
     - secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
   aliases:
     hosts:
       WEBSERVERS:
@@ -25,5 +35,6 @@ sudo:
         - /usr/bin/renice
         - /usr/bin/pkill
         - /usr/bin/top
+
   includedirs:
     - /etc/sudoers.d

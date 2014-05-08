@@ -25,6 +25,7 @@ Cmnd_Alias {{ name }} = {{ salt['pillar.get']('sudo:aliases:commands:' ~ name) |
 {%- endfor %}
 
 # User privilege specification
+root ALL=(ALL:ALL) ALL
 {%- for user in salt['pillar.get']('sudo:users', []) %}
 {{ user }} {{ salt['pillar.get']('sudo:users:' ~ user) }}
 {%- endfor %}
