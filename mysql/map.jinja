@@ -1,8 +1,8 @@
 {% set mysql = salt['grains.filter_by']({
     'default': {
+        'config': '/etc/mysql/my.cnf',
         'pkg_server': 'mysql-server',
         'service_server': 'mysql',
-        'config_server': '/etc/my.cnf',
         'pkg_client': 'mysql-client',
         'pkg_python': 'python-mysqldb',
     },
