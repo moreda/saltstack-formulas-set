@@ -23,10 +23,22 @@ Available states
 
 Installs the mysql-server package and starts the associated service.
 
+``mysql.server.conf``
+---------------------
+
+Configures the mysql-server package. This state just includes ``mysql.conf`` and
+sets the adequate requisites.
+
 ``mysql.client``
 ----------------
 
 Installs the mysql-client package.
+
+``mysql.client.conf``
+---------------------
+
+Configures the mysql-client package. This state just includes ``mysql.conf`` and
+sets the adequate requisites.
 
 ``mysql.python``
 ----------------
