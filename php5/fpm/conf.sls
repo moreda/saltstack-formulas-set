@@ -40,8 +40,6 @@ include:
         pool: {{ pool }}
     - require:
       - pkg: php5-fpm
-      - user: {{ pool_attr['user'] }}
-      - group: {{ pool_attr['group'] }}
     - watch_in:
       - service: php5-fpm
 

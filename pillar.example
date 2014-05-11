@@ -26,9 +26,16 @@ php5-fpm:
       group: users
 
       # User, group and permissions for the UNIX socket
-      listen_owner: www-data
-      listen_group: www-data
-      listen_mode: 0666
+      listen.owner: www-data
+      listen.group: www-data
+      listen.mode: 0666
+
+      # Configuration of pm
+      pm.max_children: 10
+      pm.start_servers: 4
+      pm.min_spare_servers: 2
+      pm.max_spare_servers: 6
+      pm.max_requests: 500
 
       # Allowed clients
       listen_allowed_clients: 127.0.0.1
