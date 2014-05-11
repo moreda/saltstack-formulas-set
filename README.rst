@@ -106,6 +106,11 @@ Installs the php5-curl package.
 
 Installs the php5-mysql package.
 
+``php5.gd``
+------------
+
+Installs the php5-gd package.
+
 ``php5.fpm``
 ------------
 
