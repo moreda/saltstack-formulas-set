@@ -25,6 +25,14 @@ php5-fpm:
       user: bob
       group: users
 
+      # User, group and permissions for the UNIX socket
+      listen_owner: www-data
+      listen_group: www-data
+      listen_mode: 0666
+
+      # Allowed clients
+      listen_allowed_clients: 127.0.0.1
+
       # Other common parameters
       log_dir: /home/bob/log
       listen: 127.0.0.1:9000
