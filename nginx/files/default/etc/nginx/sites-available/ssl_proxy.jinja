@@ -31,4 +31,7 @@ server {
     add_header Front-End-Https on;
     proxy_redirect http:// https://;
   }
+
+{{ site_attr['extra_conf'] }}
 }
+
