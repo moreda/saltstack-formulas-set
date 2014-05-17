@@ -1,0 +1,77 @@
+apache:
+  # The files_switch key serves as a selector for alternative directories under
+  # the formula files directory. Under the files directory could exist several
+  # subdirectories named on the value of certain grains. By default the selector
+  # is the minion id, but it could be a list of them.
+  files_switch:
+    - id
+    - os_family
+
+  # User and group for the main apache process
+  user: www-data
+  group: www-data
+
+  # MPM conf
+  mpm:
+    module: mpm_event
+    # these params apply depending on the selected mpm module
+    params:
+      max_connections_per_child: 0
+      max_request_workers: 150
+      max_spare_servers: 10
+      max_spare_threads: 75
+      min_spare_servers: 5
+      min_spare_threads: 25
+      start_servers: 2
+      thread_limit: 64
+      threads_per_child: 25
+
+  # Logformat definitions
+  log_formats:
+    - '"%h %{X-Forwarded-For}i %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"" combined_xff'
+
+  # Configuration of sites
+  sites:
+
+    www.example.com:
+      # State could be enabled (default) | disabled | absent
+      state: enabled
+
+      # Name of the file with the conf. Default is <site name>.conf
+      conf_filename: www.example.com.conf
+
+      # Jinja template for this site. Should be in
+      # files/default/etc/apache2/sites-available/<template>.jinja
+      template: minimal
+
+      # The following key:value pairs are used in the provided default template
+      addr: '*:80'
+      document_root: /var/www/bob/public_html
+
+      # Creates documento_root and log_dir directories with the specified
+      # user and group. It's your responsibility to ensure that user and group
+      # exists
+      create_dirs: True
+      user: bob
+      group: www-data
+
+      # Other common parameters
+      server_admin: bob@allenta.com
+      server_name: www.example.com
+      server_alias: example.com
+      custom_logs: 
+        - /var/www/bob/log/www.example.com_access.log combined_xff
+      error_log: /var/www/bob/log/www.example.com_error.log
+      log_level: warn
+      # TCP version
+      #fast_cgi_external_server: fcgi://127.0.0.1:9000/var/www/bob/public_html/$1
+      # UNIX socket version
+      # The host localhost doesn't really matter, you can put whatever
+      fast_cgi_external_server: unix:/var/run/php5-fpm_bob.socket|fcgi://localhost/var/www/bob/public_html
+      # Extra configuration to be added to the VirtualHost environment
+      extra_conf: |
+        # This is an example of snippet added to the conf from pillar data
+
+    default_site:
+      state: disabled
+      conf_filename: 000-default.conf
