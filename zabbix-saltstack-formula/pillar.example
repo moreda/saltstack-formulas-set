@@ -1,0 +1,51 @@
+zabbix-agent:
+  # The files_switch key serves as a selector for alternative directories under
+  # the formula files directory. Under the files directory could exist several
+  # subdirectories named on the value of certain grains. By default the selector
+  # is the minion id, but it could be a list of them.
+  files_switch:
+    - id
+    - os_family
+
+  server: localhost
+  listenport: 10050
+  listenip: 0.0.0.0
+  serveractive: localhost
+  logfile: /var/log/zabbix/zabbix_agentd.log
+  include: /etc/zabbix/zabbix_agentd.d/
+  userparameters:
+    - net.ping[*],/usr/bin/fping -q -c3 $1 2>&1 | sed 's,.*/\([0-9.]*\)/.*,\1,'
+    - custom.vfs.dev.discovery,/usr/local/bin/dev-discovery.sh
+  extra_conf: |
+    # Here we can set extra conf lines like user parameters
+
+zabbix-server:
+  files_switch:
+    - id
+    - os_family
+  dbhost: localhost
+  dbname: zabbix
+  dbuser: zabbixuser
+  dbpass: zabbixpass
+
+zabbix-mysql:
+  files_switch:
+    - id
+    - os_family
+  dbhost: localhost
+  dbname: zabbix
+  dbuser: zabbixuser
+  dbpass: zabbixpass
+  dbuser_host: '%'
+
+zabbix-frontend:
+  files_switch:
+    - id
+    - os_family
+  dbhost: localhost
+  dbname: zabbix
+  dbuser: zabbixuser
+  dbpass: zabbixpass
+  zbxserver: localhost
+  zbxserverport: 10051
+  zbxservername: 'Zabbix installed with saltstack'
