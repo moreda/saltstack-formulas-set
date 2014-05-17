@@ -1,0 +1,6 @@
+{% set sudo = salt['grains.filter_by']({
+    'default': {
+        'pkg': 'sudo',
+        'config': '/etc/sudoers',
+    },
+}, merge=salt['pillar.get']('sudo:lookup')) %}

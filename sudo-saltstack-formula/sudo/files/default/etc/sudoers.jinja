@@ -1,0 +1,41 @@
+# Managed by saltstack
+
+{%- for default in salt['pillar.get']('sudo:defaults',
+  ['env_reset',
+   'secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"']) %}
+Defaults {{ default }}
+{%- endfor %}
+
+# Host alias specification
+{%- for name in salt['pillar.get']('sudo:aliases:hosts', []) %}
+Host_Alias {{ name }} = {{ salt['pillar.get']('sudo:aliases:hosts:' ~ name) |
+                           join(',') }}
+{%- endfor %}
+
+# User alias specification
+{%- for name in salt['pillar.get']('sudo:aliases:users', []) %}
+User_Alias {{ name }} = {{ salt['pillar.get']('sudo:aliases:users:' ~ name) |
+                           join(',') }}
+{%- endfor %}
+
+# Cmnd alias specification
+{%- for name in salt['pillar.get']('sudo:aliases:commands', []) %}
+Cmnd_Alias {{ name }} = {{ salt['pillar.get']('sudo:aliases:commands:' ~ name) |
+                           join(',') }}
+{%- endfor %}
+
+# User privilege specification
+root ALL=(ALL:ALL) ALL
+{%- for user in salt['pillar.get']('sudo:users', []) %}
+{{ user }} {{ salt['pillar.get']('sudo:users:' ~ user) }}
+{%- endfor %}
+
+# Group privilege specification
+{%- for group in salt['pillar.get']('sudo:groups', []) %}
+%{{ group }} {{ salt['pillar.get']('sudo:groups:' ~ group) }}
+{%- endfor %}
+
+# See sudoers(5) for more information on "#include" directives:
+{%- for includedir in salt['pillar.get']('sudo:includedirs', []) %}
+#includedir {{ includedir }}
+{%- endfor %}
