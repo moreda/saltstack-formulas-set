@@ -6,7 +6,7 @@ worker_processes {{ salt['pillar.get']('nginx:worker_processes', 4) }};
 pid /var/run/nginx.pid;
 
 events {
-	worker_connections 4096;
+	worker_connections {{ salt['pillar.get']('nginx:worker_connections', 512) }};
 	# multi_accept on;
 }
 

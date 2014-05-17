@@ -2,6 +2,7 @@ nginx:
   user: www-data
   group: www-data
   worker_processes: 4
+  worker_connections: 512
   keepalive_timeout: 2
   sites:
     www.example1.com:
