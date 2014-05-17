@@ -1,0 +1,62 @@
+php5-fpm:
+  # The files_switch key serves as a selector for alternative directories under
+  # the formula files directory. Under the files directory could exist several
+  # subdirectories named on the value of certain grains. By default the selector
+  # is the minion id, but it could be a list of them.
+  files_switch:
+    - id
+    - os_family
+
+  # Configuration of pools
+  pools:
+
+    example_pool:
+      # State could be enabled (default) | disabled | absent
+      state: enabled
+
+      # Name of the file with the conf. Default is <pool name>.conf
+      conf_filename: www.example.com.conf
+
+      # Jinja template for this site. Should be in
+      # files/default/etc/php5/fpm/pool.d/<template>.jinja
+      template: minimal
+
+      # User and group for the process pool
+      user: bob
+      group: users
+
+      # User, group and permissions for the UNIX socket
+      listen.owner: www-data
+      listen.group: www-data
+      listen.mode: 0666
+
+      # Configuration of pm
+      pm.max_children: 10
+      pm.start_servers: 4
+      pm.min_spare_servers: 2
+      pm.max_spare_servers: 6
+      pm.max_requests: 500
+
+      # Allowed clients
+      listen_allowed_clients: 127.0.0.1
+
+      # Other common parameters
+      log_dir: /home/bob/log
+      listen: 127.0.0.1:9000
+
+      # Extra configuration to be added to the pool conf file
+      extra_conf: |
+        # This is an example of snippet added to the conf from pillar data
+
+    example_with_socket:
+      state: enabled
+      template: minimal
+      user: bob
+      group: www-data
+      listen: /var/run/php5-fpm_example_with_socket.socket
+      extra_conf: |
+        # This is an example of snippet added to the conf from pillar data
+    pool_to_delete:
+      state: absent
+      conf_filename: pool_to_delete.conf
+
