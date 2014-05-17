@@ -1,0 +1,59 @@
+# Managed by saltstack.
+# TODO: Activate NAXSI
+{% set site_attr = salt['pillar.get']('nginx:sites:' ~ site) %}
+{% set default_access_log = '/var/log/nginx/' ~ site ~ '_access.log' %}
+{% set default_error_log = '/var/log/nginx/' ~ site ~ '_error.log' %}
+
+server {
+  listen {{ site_attr['listen'] }};
+  server_name {{ site_attr['server_name'] }};
+
+  access_log {{ site_attr['access_log'] | d(default_access_log) }};
+  error_log {{ site_attr['error_log'] | d(default_error_log) }};
+
+  root {{ site_attr['root'] }};
+
+  index index.php index.html index.htm;
+
+  location / {
+    # First attempt to serve request as file, then
+    # as directory, then fall back to index.html
+    try_files $uri $uri/ /index.html;
+    # Uncomment to enable naxsi on this location
+    # include /etc/nginx/naxsi.rules
+  }
+
+  # Only for nginx-naxsi : process denied requests
+  #location /RequestDenied {
+          # For example, return an error code
+          #return 418;
+  #}
+
+  #error_page 404 /404.html;
+
+  # redirect server error pages to the static page /50x.html
+  #
+  error_page 500 502 503 504 /50x.html;
+  location = /50x.html {
+          root {{ site_attr['root'] }};
+  }
+
+{% if site_attr['fastcgi_pass'] is defined %}
+  # pass the PHP scripts to FastCGI server listening on {{ site_attr['fastcgi_pass'] }}
+  #
+  location ~ \.php$ {
+          try_files $uri =404;
+          fastcgi_split_path_info ^(.+\.php)(/.+)$;
+          fastcgi_pass unix:{{ site_attr['fastcgi_pass'] }};
+          fastcgi_index index.php;
+          include fastcgi_params;
+  }
+{% endif %}
+
+  # deny access to .htaccess files, if Apache's document root
+  # concurs with nginx's one
+  #
+  location ~ /\.ht {
+          deny all;
+  }
+}

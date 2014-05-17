@@ -1,0 +1,44 @@
+nginx:
+  user: www-data
+  group: www-data
+  worker_processes: 4
+  worker_connections: 512
+  keepalive_timeout: 2
+  sites:
+    www.example1.com:
+      # State could be enabled (=default) | disabled | absent
+      state: enabled
+      # Jinja template for this site. Should be in
+      # files/default/etc/ngnix/sites-available/<template>.jinja
+      template: ssl_proxy
+      server_name: www.foo.com
+      listen: 10.10.10.10:443
+      proxy_pass: http://localhost
+      ssl:
+        certificate: |
+          XXXX
+          XXXX
+        key: |
+          key-XXXX
+          key-XXXX
+      # Extra configuration to be added to the VirtualHost environment
+      extra_conf: |
+        # This is an example of snippet added to the conf from pillar data
+    bobs.website.com:
+      template: minimal
+      server_name: bobs.website.com
+      listen: '*:80'
+      root: /home/bob/public_html
+      log_dir: /home/bob/log
+      # Creates root and log_dir directories with the specified user/group
+      # It's your responsibility to ensure that user/group exists
+      create_dirs: True
+      user: bob
+      group: www-data
+      fastcgi_pass: unix:/var/run/php5-fpm_example_with_socket.socket
+      # Extra configuration to be added to the VirtualHost environment
+      extra_conf: |
+        # This is an example of snippet added to the conf from pillar data
+    default:
+      state: disabled
+      conf_filename: default.conf
