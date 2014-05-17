@@ -1,0 +1,28 @@
+shorewall:
+  # The files_switch key serves as a selector for alternative directories under
+  # the formula files directory. Under the files directory could exist several
+  # subdirectories named on the value of certain grains. By default the selector
+  # is the minion id, but it could be a list of them.
+  files_switch:
+    - id
+    - os_family
+
+  logfile: /var/log/syslog
+  ip_forwarding: 'On'
+  zone2zone: '-'
+
+  # The noc_nets value is going to be used in the params conf and then in
+  # conf rules to give ssh access from the Network Ops Center. It's used in
+  # the default minimalistic configuration provided.
+  noc_nets: '66.66.66.66/24,99.99.99.99'
+
+  # We assume that there is a files/*/etc/shorewall/<conf>.jinja or
+  # files/default/etc/shorewall/<conf>.jinja for each case.
+  confs:
+    - interfaces
+    - params
+    - policy
+    - rules
+    - zones
+  confs_absent:
+    - conntrack

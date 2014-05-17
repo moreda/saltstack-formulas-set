@@ -1,0 +1,7 @@
+{% set shorewall = salt['grains.filter_by']({
+    'Debian': {
+        'pkg': 'shorewall',
+        'service': 'shorewall',
+        'config': '/etc/shorewall/shorewall.conf',
+    },
+}, merge=salt['pillar.get']('shorewall:lookup')) %}

@@ -1,0 +1,7 @@
+# Managed by saltstack
+
+# For information about entries in this file, type "man shorewall-rules"
+?COMMENT SSH access from NOC
+SSH(ACCEPT) inet:$NOC fw
+?COMMENT SSH access from inet zone (ment to be disabled after testing)
+SSH(ACCEPT) inet fw
