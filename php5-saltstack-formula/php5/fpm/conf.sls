@@ -44,6 +44,23 @@ include:
       - service: php5-fpm
 
 
+    {% if pool_attr['create_dirs'] is defined and pool_attr['create_dirs'] %}
+      {% if pool_attr['log_dir'] is defined %}
+{{ pool_attr['log_dir'] }}:
+  file:
+    - directory
+    - makedirs: true
+    - user: {{ pool_attr['user'] | d('www-data') }}
+    - group: {{ pool_attr['group'] | d('www-data') }}
+    - mode: 775
+    - require:
+      - user: {{ pool_attr['user'] | d('www-data') }}
+      - group: {{ pool_attr['group'] | d('www-data') }}
+    - require_in:
+      - service: php5-fpm
+      {% endif %}
+    {% endif %}
+
   {% elif pool_attr['state'] == 'absent' %}
 /etc/php5/fpm/pool.d/{{ pool }}.conf:
   file:

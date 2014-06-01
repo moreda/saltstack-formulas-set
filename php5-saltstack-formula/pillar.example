@@ -7,6 +7,9 @@ php5-fpm:
     - id
     - os_family
 
+  # This is used for signaling from logrotate script
+  pid_file: /var/run/php5-fpm.pid
+
   # Configuration of pools
   pools:
 
@@ -22,8 +25,8 @@ php5-fpm:
       template: minimal
 
       # User and group for the process pool
-      user: bob
-      group: users
+      user: www-data
+      group: www-data
 
       # User, group and permissions for the UNIX socket
       listen.owner: www-data
@@ -37,25 +40,27 @@ php5-fpm:
       pm.max_spare_servers: 6
       pm.max_requests: 500
 
-      # Allowed clients
-      listen_allowed_clients: 127.0.0.1
-
       # Other common parameters
-      log_dir: /home/bob/log
-      listen: 127.0.0.1:9000
+      log_dir: /var/www/bob/log
+      logrotate_files:
+        - /var/www/bob/log/*.log
+      listen: /var/run/php5-fpm_bob.socket
 
       # Extra configuration to be added to the pool conf file
       extra_conf: |
         # This is an example of snippet added to the conf from pillar data
 
-    example_with_socket:
+    example_pool_with_tcp:
       state: enabled
       template: minimal
       user: bob
       group: www-data
-      listen: /var/run/php5-fpm_example_with_socket.socket
+      # Allowed clients
+      listen_allowed_clients: 127.0.0.1
+      listen: 127.0.0.1:9000
       extra_conf: |
         # This is an example of snippet added to the conf from pillar data
+
     pool_to_delete:
       state: absent
       conf_filename: pool_to_delete.conf
